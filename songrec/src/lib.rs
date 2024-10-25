@@ -6,6 +6,8 @@ mod fingerprinting {
     pub mod algorithm;
     pub mod signature_format;
     mod hanning;
+    mod decode;
+    mod resample;
 }
 
 use crate::fingerprinting::algorithm::SignatureGenerator;
