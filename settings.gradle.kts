@@ -10,6 +10,10 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    // Make the Kotlin JVM plugin resolvable from the version catalog
+    plugins {
+        kotlin("jvm") version "2.0.21"
+    }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -19,5 +23,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "songrec-android"
+rootProject.name = "songrec-kt"
+include(":common")
 include(":app")
+include(":desktop")

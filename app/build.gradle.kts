@@ -4,13 +4,18 @@ plugins {
     `maven-publish`
 }
 
+dependencies {
+    implementation(project(":common"))
+}
+
 android {
     namespace = "io.github.tiefensuche"
-    compileSdk = 34
+    compileSdk = 36
+    ndkVersion = "30.0.14904198"
 
     defaultConfig {
         minSdk = 16
-        targetSdk = 34
+        targetSdk = 36
     }
 
     buildTypes {
@@ -29,27 +34,23 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 publishing {
     publications {
-        create<MavenPublication>("maven") {
+        create<MavenPublication>("release") {
             groupId = "io.github.tiefensuche"
-            artifactId = "songrec-android"
-            version = "0.1"
+            artifactId = "songrec-kt"
+            version = project.findProperty("publishVersion")?.toString() ?: "1.0"
 
             afterEvaluate {
                 from(components["release"])
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            url = uri("https://maven.pkg.github.com/0xf4b1/songrec-android")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
             }
         }
     }

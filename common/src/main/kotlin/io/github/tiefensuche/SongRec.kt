@@ -10,7 +10,7 @@ class SongRec {
     external fun makeSignatureFromFile(input: String): String
 
     init {
-        System.loadLibrary("songrec")
+        SongRecLibLoader.load()
     }
 
     fun recognizeSongFromSignature(data: String): String {
