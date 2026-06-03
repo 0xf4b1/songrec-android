@@ -1,0 +1,77 @@
+name: Update Native Libraries
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'songrec/src/**'
+      - 'songrec/Cargo.toml'
+      - 'songrec/Cargo.lock'
+  workflow_dispatch:
+
+jobs:
+  # -----------------------------------------------------------------------
+  # Build Android .so files
+  # -----------------------------------------------------------------------
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android
+
+      - name: Install cargo-ndk
+        run: cargo install cargo-ndk
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install NDK
+        run: sdkmanager "ndk;30.0.14904198"
+
+      - name: Build Android native libs
+        run: ./gradlew buildRustAndroid
+        env:
+          ANDROID_NDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}/ndk/30.0.14904198
+
+      - name: Upload jniLibs
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-jnilibs
+          path: app/src/main/jniLibs/
+
+  # -----------------------------------------------------------------------
+  # Build desktop native lib for each platform
+  # -----------------------------------------------------------------------
+  build-desktop:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: desktop-linux
+          - os: macos-latest
+            artifact: desktop-macos
+          - os: windows-latest
+            artifact: desktop-windows
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Build desktop native lib
+        run: ./gradlew buildRustDesktop
+
+      - name: Upload native resources
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: desktop/src/main/resources/native/
