@@ -1,4 +1,4 @@
-name: Update Native Libraries
+name: Build Native Rust Libraries
 
 on:
   push:
@@ -64,7 +64,7 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Build desktop native lib
