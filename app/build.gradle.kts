@@ -4,6 +4,9 @@ plugins {
     `maven-publish`
 }
 
+group = "io.github.tiefensuche"
+version = project.findProperty("publishVersion")?.toString() ?: "1.0"
+
 dependencies {
     implementation(project(":common"))
 }
