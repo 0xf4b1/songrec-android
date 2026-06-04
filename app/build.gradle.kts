@@ -46,7 +46,7 @@ publishing {
     publications {
         create<MavenPublication>("release") {
             groupId = "io.github.tiefensuche"
-            artifactId = "songrec-kt"
+            artifactId = "songrec-android"
             version = project.findProperty("publishVersion")?.toString() ?: "1.0"
 
             afterEvaluate {
